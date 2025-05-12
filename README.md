@@ -278,17 +278,17 @@ Qua quá trình tìm hiểu và tổng hợp, báo cáo này đã trình bày m�
 * Nắm vững định nghĩa, cơ chế hoạt động, ưu nhược điểm và các tiêu chí đánh giá của từng thuật toán và nhóm thuật toán.
 * Hiểu rõ hơn về vai trò của hàm heuristic trong việc cải thiện hiệu quả tìm kiếm.
 * Nhận diện được các loại bài toán phù hợp với từng phương pháp tìm kiếm cụ thể.
-* (Nếu có thực nghiệm) Đánh giá được hiệu suất tương đối của một số thuật toán thông qua ví dụ minh họa như trò chơi 8 ô chữ.
 
 **Hướng phát triển/nghiên cứu sâu hơn (đề xuất):**
 
 * Triển khai và thực nghiệm so sánh hiệu suất chi tiết hơn giữa các thuật toán trên nhiều bộ dữ liệu hoặc bài toán phức tạp hơn.
 * Nghiên cứu sâu hơn về các kỹ thuật heuristic nâng cao và cách xây dựng heuristic hiệu quả.
 * Tìm hiểu sâu hơn về các thuật toán trong môi trường quan sát được một phần (POMDPs) và các ứng dụng thực tế của chúng.
-* Khám phá các kiến trúc và thuật toán học tăng cường tiên tiến hơn.
+
 
 **Bài học kinh nghiệm:**
 
 * Việc lựa chọn thuật toán tìm kiếm phụ thuộc rất nhiều vào đặc điểm của bài toán (kích thước không gian trạng thái, sự có sẵn của heuristic, yêu cầu về tính tối ưu, ràng buộc bộ nhớ và thời gian).
-* Minh họa trực quan (ví dụ bằng gif) giúp hiểu rõ hơn về cách các thuật toán duyệt không gian trạng thái.
-* Lý thuyết cần đi đôi với thực hành để có thể đánh giá và áp dụng thuật toán một cách hiệu quả.
+* Việc sử dụng thuật toán cần chọn lựa cẩn thận và phù hợp với ứng dụng
+* Lý thuyết cần đi đôi với thực hành để có thể đánh giá và áp dụng thuật toán một cách hiệu quả và hiểu rõ bản chất của thuật toán
+  
