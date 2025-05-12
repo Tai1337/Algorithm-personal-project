@@ -191,26 +191,15 @@ Nhóm này bao gồm các thuật toán được thiết kế cho các môi trư
 #### 2.5.1. Tree Search AND-OR (Cây tìm kiếm AND-OR)
 
 * **Trình bày:** Sử dụng cho các bài toán mà một giải pháp có thể yêu cầu hoàn thành một tập hợp các tiểu mục tiêu (nút AND) hoặc một trong số các tiểu mục tiêu thay thế (nút OR). Ví dụ: phân tích cú pháp, lập kế hoạch có điều kiện.
-* **Minh họa:**
-    ```
-    [Chèn hình ảnh minh họa cấu trúc cây AND-OR và quá trình tìm kiếm tại đây]
-    ```
 
 #### 2.5.2. Partially Observable (Nhìn thấy một phần)
 
 * **Trình bày:** Trong môi trường quan sát được một phần (POMDPs - Partially Observable Markov Decision Processes), tác nhân không thể biết chắc chắn trạng thái hiện tại của nó. Thay vào đó, nó duy trì một *belief state* (trạng thái niềm tin) - một phân phối xác suất trên các trạng thái có thể. Tìm kiếm được thực hiện trong không gian của các belief state này.
-* **Minh họa:**
-    ```
-    [Ghi chú: Việc minh họa bằng gif cho POMDP search rất phức tạp, có thể thay bằng sơ đồ khái niệm belief state.]
-    ```
+
 
 #### 2.5.3. Unknown or Dynamic Environment (Không nhìn thấy hoàn toàn – Tìm kiếm trong môi trường niềm tin)
 
 * **Trình bày:** Tác nhân phải học về môi trường trong khi hành động (exploration) và đồng thời cố gắng đạt được mục tiêu dựa trên những gì đã học (exploitation). Đây là lĩnh vực của học tăng cường. Môi trường có thể không xác định ban đầu hoặc thay đổi theo thời gian.
-* **Minh họa:**
-    ```
-    [Ghi chú: Thường liên quan đến các thuật toán học tăng cường, minh họa có thể là agent khám phá mê cung.]
-    ```
 
 ### 2.6. Tìm kiếm trong môi trường có ràng buộc (Constraint Satisfaction Problems - CSPs)
 
