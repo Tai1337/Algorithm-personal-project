@@ -89,17 +89,6 @@ Các thuật toán tìm kiếm thường được đánh giá dựa trên các t
     * Độ phức tạp thời gian: $O(b^d)$.
     * Độ phức tạp không gian: $O(bd)$.
 
-#### 2.2.5. So sánh hiệu suất và nhận xét (Nhóm Uninformed Search)
-
-* **Hình ảnh so sánh:**
-    ```
-    [Chèn hình ảnh/bảng so sánh hiệu suất của BFS, DFS, UCS, IDS dựa trên các tiêu chí (đầy đủ, tối ưu, thời gian, không gian) tại đây]
-    ```
-* **Nhận xét khi áp dụng lên trò chơi 8 ô chữ (nếu có):**
-    * BFS và IDS đảm bảo tìm ra lời giải ngắn nhất nhưng tốn bộ nhớ.
-    * DFS có thể nhanh chóng tìm ra một lời giải (không chắc tối ưu) với bộ nhớ ít hơn, nhưng có thể bị lạc vào nhánh sâu.
-    * UCS sẽ tìm ra lời giải tối ưu nếu chi phí các bước đi được định nghĩa.
-
 ### 2.3. Các thuật toán Tìm kiếm có thông tin (Informed Search / Heuristic Search)
 
 Nhóm thuật toán này sử dụng kiến thức đặc thù của bài toán, thường dưới dạng một hàm đánh giá heuristic $h(n)$, để ước lượng "sự hứa hẹn" của một nút trong việc dẫn đến trạng thái đích.
