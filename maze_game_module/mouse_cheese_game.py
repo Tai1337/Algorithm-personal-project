@@ -5,10 +5,9 @@ from collections import defaultdict
 import os
 import csv
 
-# Pygame Settings
+
 CELL_SIZE = 80
 
-# Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -42,7 +41,7 @@ class MazeGame:
         self.initial_cheese_positions = frozenset(cheese_positions)
         self.start_pos = tuple(start_pos)
         self.target_cheese_count = target_cheese_count
-        self.q_table_file = q_table_file  # Đường dẫn file CSV để lưu/tải Q-table
+        self.q_table_file = q_table_file  
 
         self.font = pygame.font.Font(None, 30)
 
@@ -69,10 +68,9 @@ class MazeGame:
         self.q_learning_agent = QLearningAgent(
             actions=[0, 1, 2, 3],
             maze_shape=self.maze.shape,
-            q_table_file=self.q_table_file,  # Truyền đường dẫn file Q-table
+            q_table_file=self.q_table_file,  
             **q_agent_params
         )
-        # Tải Q-table nếu file tồn tại
         self.q_learning_agent.load_q_table()
         self.reset_game_state()
 
@@ -214,12 +212,12 @@ class MazeGame:
             total_reward, episode_steps, quit_flag = self.run_episode(learn=True, display_speed=400)
             if quit_flag: 
                 print("Training interrupted by user.")
-                # Lưu Q-table trước khi thoát
+                
                 self.q_learning_agent.save_q_table()
                 return 
             if total_reward is None: 
                 print("Training stopped by user.")
-                # Lưu Q-table trước khi thoát
+            
                 self.q_learning_agent.save_q_table()
                 return 
             rewards_per_episode.append(total_reward); steps_per_episode.append(episode_steps)
@@ -240,7 +238,7 @@ class MazeGame:
                     print(f"Consistently solving. Stopping training early at episode {episode+1}.") 
                     break
         print("Training finished.")
-        # Lưu Q-table sau khi huấn luyện hoàn tất
+    
         self.q_learning_agent.save_q_table()
 
     def demonstrate_optimal_path(self, max_steps_demo=50):
@@ -288,7 +286,7 @@ class QLearningAgent:
         self.epsilon = epsilon_start; self.epsilon_min = epsilon_end; self.epsilon_decay = epsilon_decay_rate
         self.q_table = defaultdict(lambda: np.full(len(actions), initial_q_value, dtype=float))
         self.maze_rows, self.maze_cols = maze_shape; self.current_episode_num = 0
-        self.q_table_file = q_table_file  # Đường dẫn file CSV để lưu/tải Q-table
+        self.q_table_file = q_table_file  
 
     def choose_action(self, state, learn=True):
         if learn and random.uniform(0,1) < self.epsilon: return random.choice(self.actions)
@@ -313,7 +311,7 @@ class QLearningAgent:
                 writer.writerow(['row', 'col', 'cheese_positions', 'action', 'q_value'])
                 for (state, action), q_value in self.q_table.items():
                     row, col, cheese_fset = state
-                    cheese_str = str(sorted(list(cheese_fset)))  # Chuyển frozenset thành chuỗi để lưu
+                    cheese_str = str(sorted(list(cheese_fset)))  
                     for a, q in enumerate(q_value):
                         writer.writerow([row, col, cheese_str, a, q])
             print(f"Q-table saved to {self.q_table_file}")
@@ -337,7 +335,7 @@ class QLearningAgent:
                         state = (
                             int(row['row']),
                             int(row['col']),
-                            frozenset(eval(row['cheese_positions']))  # Chuyển chuỗi thành frozenset
+                            frozenset(eval(row['cheese_positions']))  
                         )
                         action = int(row['action'])
                         q_value = float(row['q_value'])

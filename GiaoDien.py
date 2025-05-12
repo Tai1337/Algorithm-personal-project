@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import os
 import traceback
-import pygame
+import pygame 
 import sys
 
-# --- BEGIN MAZE GAME IMPORTS ---
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
@@ -22,16 +22,23 @@ try:
     MAZE_GAME_AVAILABLE = True
 except ImportError as e:
     print(f"Could not import MouseCheeseGame: {e}")
-    print("Please ensure 'maze_game_module' is structured correctly and all its dependencies are met.")
     MAZE_GAME_AVAILABLE = False
 
 try:
-    import pygame_gui
+    import pygame_gui 
     PYGAME_GUI_AVAILABLE = True
 except ImportError:
     PYGAME_GUI_AVAILABLE = False
-    print("pygame_gui library not found. UI elements in the maze game might be affected if it relies on it.")
-# --- END MAZE GAME IMPORTS ---
+
+
+try:
+
+    from sudoku_game_module.sudoku_solver_game import SudokuPygame
+    SUDOKU_GAME_AVAILABLE = True
+except ImportError as e:
+    print(f"Could not import SudokuPygame: {e}")
+    SUDOKU_GAME_AVAILABLE = False
+
 
 try:
     import ThuatToan
@@ -39,14 +46,13 @@ except ImportError:
     messagebox.showerror("Lỗi (Error)", "Không tìm thấy file ThuatToan.py.\nVui lòng đặt file ThuatToan.py cùng thư mục.")
     exit()
 
-# --- Constants ---
+
 DEFAULT_START_STATE = [[1, 2, 3], [0, 4, 6], [7, 5, 8]]
 DEFAULT_GOAL_STATE = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
 ANIMATION_DELAY_MS = 400
 GRAPH_FILENAME = "heuristic_graph.png"
-Q_TABLE_FILE = os.path.join(script_dir, "q_table.csv")  # Đường dẫn file Q-table
+Q_TABLE_FILE = os.path.join(script_dir, "q_table.csv")
 
-# --- Cập nhật ALGORITHMS dictionary ---
 SINGLE_STATE_ALGORITHMS = {
     "BFS": ThuatToan.BFS,
     "UCS": ThuatToan.UCS,
@@ -75,7 +81,6 @@ BELIEF_STATE_ALGORITHMS = {
     "Belief1p Search (Greedy)": ThuatToan.Belief1p_Search,
 }
 
-# --- Utility Functions (Giữ nguyên) ---
 def validate_puzzle_state(matrix):
     flat_list = [item for sublist in matrix for item in sublist]
     if len(flat_list) != 9: return False, "State must have 9 numbers."
@@ -115,13 +120,13 @@ def plot_heuristic_graph(path, goal_state, filename=GRAPH_FILENAME):
             if is_valid_state:
                 valid_path_for_heuristic.append(state)
             else:
-                pass 
+                pass
 
         if not valid_path_for_heuristic:
             return False
 
         heuristics = [ThuatToan.khoang_cach_mahathan(state, goal_state) for state in valid_path_for_heuristic]
-        heuristics = [h for h in heuristics if h != float('inf')] 
+        heuristics = [h for h in heuristics if h != float('inf')]
 
         if not heuristics:
             return False
@@ -133,7 +138,6 @@ def plot_heuristic_graph(path, goal_state, filename=GRAPH_FILENAME):
     except Exception as e:
         return False
 
-# --- Input Dialog (Giữ nguyên) ---
 class InputStateDialog(ctk.CTkToplevel):
     def __init__(self, parent, title="Nhập Trạng Thái", current_state=None):
         super().__init__(parent)
@@ -173,12 +177,10 @@ class InputStateDialog(ctk.CTkToplevel):
     def _on_cancel(self): self.result_state = None; self.grab_release(); self.destroy()
     def get_state(self): self.parent.wait_window(self); return self.result_state
 
-
-# --- Main Application Class ---
 class PuzzleApp(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("8-Puzzle Solver & Maze Game - Visual Interface")
+        self.title("8-Puzzle Solver & Mini Games - Visual Interface") 
         self.geometry("1250x800")
         ctk.set_appearance_mode("System")
         ctk.set_default_color_theme("blue")
@@ -201,7 +203,7 @@ class PuzzleApp(ctk.CTk):
 
         self.control_frame = ctk.CTkFrame(self, width=280, corner_radius=10)
         self.control_frame.grid(row=0, column=0, padx=(10, 5), pady=10, sticky="nsew")
-        self.control_frame.grid_rowconfigure(12, weight=1)
+        self.control_frame.grid_rowconfigure(16, weight=1) 
 
         self.algo_label = ctk.CTkLabel(self.control_frame, text="Algorithm (8-Puzzle):", font=ctk.CTkFont(weight="bold"))
         self.algo_label.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
@@ -235,17 +237,29 @@ class PuzzleApp(ctk.CTk):
         self.randomize_button.grid(row=9, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
         
         ctk.CTkFrame(self.control_frame, height=2, fg_color="gray").grid(row=10, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+        
+        
+        self.mini_games_label = ctk.CTkLabel(self.control_frame, text="Mini Games:", font=ctk.CTkFont(weight="bold"))
+        self.mini_games_label.grid(row=11, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
 
         self.run_maze_game_button = ctk.CTkButton(self.control_frame, text="Chạy Game Chuột Tìm Phô Mai", command=self.run_mouse_cheese_game_callback)
-        self.run_maze_game_button.grid(row=11, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+        self.run_maze_game_button.grid(row=12, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
         if not MAZE_GAME_AVAILABLE:
             self.run_maze_game_button.configure(state="disabled", text="Game Mê Cung (Lỗi Import)")
 
+        
+        self.run_sudoku_game_button = ctk.CTkButton(self.control_frame, text="Chạy Game Sudoku Solver", command=self.run_sudoku_game_callback)
+        self.run_sudoku_game_button.grid(row=13, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        if not SUDOKU_GAME_AVAILABLE:
+            self.run_sudoku_game_button.configure(state="disabled", text="Game Sudoku (Lỗi Import)")
+        
+        
         self.theme_label = ctk.CTkLabel(self.control_frame, text="Appearance:", font=ctk.CTkFont(weight="bold"))
-        self.theme_label.grid(row=13, column=0, columnspan=2, padx=10, pady=(15, 5), sticky="w")
+        self.theme_label.grid(row=14, column=0, columnspan=2, padx=10, pady=(15, 5), sticky="w")
         self.theme_menu = ctk.CTkOptionMenu(self.control_frame, values=["System", "Light", "Dark"], command=ctk.set_appearance_mode)
-        self.theme_menu.grid(row=14, column=0, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
+        self.theme_menu.grid(row=15, column=0, columnspan=2, padx=10, pady=(0, 10), sticky="ew")
 
+        
         self.main_area = ctk.CTkTabview(self, corner_radius=10)
         self.main_area.grid(row=0, column=1, padx=(5, 10), pady=10, sticky="nsew")
         self.tab_visualization = self.main_area.add("8-Puzzle Visualization")
@@ -312,100 +326,13 @@ class PuzzleApp(ctk.CTk):
         self.update_history_display()
         self.update_statistics_display()
 
-    # ... (all existing methods of PuzzleApp remain, like create_visual_grid, update_visual_grid etc.) ...
-    # Add the new method for launching the maze game:
 
-    def run_mouse_cheese_game_callback(self):
-        if not MAZE_GAME_AVAILABLE:
-            messagebox.showerror("Lỗi Game Mê Cung",
-                                 "Không thể chạy game do lỗi import MouseCheeseGame.\n"
-                                 "Hãy kiểm tra cấu trúc thư mục 'maze_game_module' và các file phụ thuộc.")
-            return
-
-        training_episodes = simpledialog.askinteger(
-            "Huấn luyện Agent (Game Mê Cung)",
-            "Nhập số lượt huấn luyện cho Q-Learning Agent:\n(VD: 0 để không huấn luyện, 100, 1000).\n"
-            "Q-table sẽ được lưu/tải từ 'q_table.csv' trong thư mục chương trình.",
-            parent=self, minvalue=0, initialvalue=100
-        )
-        if training_episodes is None:  # Người dùng hủy
-            return
-
-        self.update_status("Đang khởi tạo Game Mê Cung...", "orange")
-        try:
-            pygame.init()
-
-            # Thiết lập mê cung mặc định
-            maze_layout = [
-                [0, 1, 0, 0, 0],
-                [0, 1, 0, 1, 0],
-                [0, 0, 0, 1, 0],
-                [0, 1, 1, 1, 0],
-                [0, 0, 0, 0, 0]
-            ]
-            TARGET_CHEESE_TO_EAT = 2
-            valid_positions = [(r, c) for r in range(len(maze_layout)) for c in range(len(maze_layout[0])) if maze_layout[r][c] == 0]
-            if not valid_positions:
-                raise ValueError("Mê cung không có ô trống hợp lệ!")
-            start_pos = random.choice(valid_positions)
-            available_for_cheese = list(set(valid_positions) - {start_pos})
-            num_cheese = min(TARGET_CHEESE_TO_EAT, len(available_for_cheese))
-            cheese_positions = random.sample(available_for_cheese, num_cheese) if num_cheese > 0 else []
-
-            # Thiết lập tham số Q-learning
-            q_agent_params = {
-                "learning_rate": 0.1,
-                "discount_factor": 0.95,
-                "epsilon_start": 1.0,
-                "epsilon_end": 0.05,
-                "epsilon_decay_rate": 0.9995,
-                "initial_q_value": 1.0
-            }
-
-            # Khởi tạo game
-            game_instance = MazeGame(
-                maze_layout=maze_layout,
-                cheese_positions=cheese_positions,
-                start_pos=start_pos,
-                target_cheese_count=TARGET_CHEESE_TO_EAT,
-                q_agent_params=q_agent_params,
-                q_table_file=Q_TABLE_FILE
-            )
-
-            self.update_status(f"Game Mê Cung: Đang huấn luyện ({training_episodes} lượt)..." if training_episodes > 0 else "Game Mê Cung: Bắt đầu.", "cyan")
-            self.update_idletasks()
-
-            # Huấn luyện nếu cần
-            if training_episodes > 0:
-                game_instance.train(training_episodes)
-                self.update_status("Game Mê Cung: Huấn luyện xong. Bắt đầu chơi.", "green")
-            else:
-                self.update_status("Game Mê Cung: AI đang chơi...", "cyan")
-
-            # Chạy demo
-            game_instance.demonstrate_optimal_path(max_steps_demo=int(game_instance.grid_width * game_instance.grid_height * 2.5))
-
-            pygame.quit()
-            self.update_status("Game Mê Cung đã kết thúc.", "blue")
-
-        except pygame.error as e:
-            messagebox.showerror("Lỗi Pygame", f"Đã xảy ra lỗi với Pygame: {e}", parent=self)
-            if pygame.get_init(): pygame.quit()
-            self.update_status("Lỗi Pygame khi chạy Game Mê Cung.", "red")
-        except ImportError as e:
-            messagebox.showerror("Lỗi Import (Game Mê Cung)", f"Không thể import module cần thiết cho game: {e}\n"
-                                 "Hãy đảm bảo file config.py, base_minigame.py đúng vị trí và nội dung.", parent=self)
-            if pygame.get_init(): pygame.quit()
-            self.update_status(f"Lỗi import Game Mê Cung: {e}", "red")
-        except Exception as e:
-            messagebox.showerror("Lỗi Game Mê Cung", f"Đã xảy ra lỗi không xác định: {e}\n{traceback.format_exc()}", parent=self)
-            if pygame.get_init(): pygame.quit()
-            self.update_status("Lỗi không xác định Game Mê Cung.", "red")
+    
     def create_visual_grid(self, parent, label_text, grid_size=60, font_size=24):
-        container = ctk.CTkFrame(parent, fg_color="transparent") 
+        container = ctk.CTkFrame(parent, fg_color="transparent")
         label = ctk.CTkLabel(container, text=label_text, font=ctk.CTkFont(weight="bold"))
         label.pack(pady=(0, 5))
-        grid_frame = ctk.CTkFrame(container, fg_color="gray50", corner_radius=5) 
+        grid_frame = ctk.CTkFrame(container, fg_color="gray50", corner_radius=5)
         grid_frame.pack()
         tile_widgets = []
         for i in range(3):
@@ -434,13 +361,13 @@ class PuzzleApp(ctk.CTk):
 
     def update_step_display(self):
          if self.belief_mode.get() and isinstance(self.solution_path, list):
-             total_steps = len(self.solution_path) 
+             total_steps = len(self.solution_path)
              self.step_label.configure(text=f"Moves: {total_steps}")
          elif not self.belief_mode.get() and isinstance(self.solution_path, list) and \
-              all(isinstance(s, list) for s in self.solution_path): 
+              all(isinstance(s, list) for s in self.solution_path):
              total_states = len(self.solution_path)
              self.step_label.configure(text=f"Step: {self.current_step_index + 1}/{total_states if total_states > 0 else 0}")
-         else: 
+         else:
              self.step_label.configure(text="Step: 0/0")
 
 
@@ -472,21 +399,21 @@ class PuzzleApp(ctk.CTk):
             header += "-" * (len(header) -1) + "\n"; self.history_textbox.insert("1.0", header)
             for _idx, (algo_name_hist, _start_data_hist, _goal_state_hist, path_hist, time_hist) in enumerate(reversed(self.history)):
                 steps_str = "N/A"
-                if algo_name_hist in BELIEF_STATE_ALGORITHMS: 
-                    if path_hist and isinstance(path_hist, list): 
+                if algo_name_hist in BELIEF_STATE_ALGORITHMS:
+                    if path_hist and isinstance(path_hist, list):
                         steps_str = f"{len(path_hist)} moves"
                     elif path_hist is None: steps_str = "No Plan"
-                    else: steps_str = "ERR (Plan Type)" 
-                else: 
+                    else: steps_str = "ERR (Plan Type)"
+                else:
                     if path_hist and isinstance(path_hist, list) and len(path_hist) > 0:
-                        if all(isinstance(s, list) for s in path_hist): 
-                             steps_str = f"{len(path_hist)-1} steps" 
-                        else: 
-                             steps_str = "Invalid Path Content" 
+                        if all(isinstance(s, list) for s in path_hist):
+                             steps_str = f"{len(path_hist)-1} steps"
+                        else:
+                             steps_str = "Invalid Path Content"
                     elif path_hist is None: steps_str = "No Path"
-                    elif path_hist and isinstance(path_hist, list) and len(path_hist) == 0: 
+                    elif path_hist and isinstance(path_hist, list) and len(path_hist) == 0:
                         steps_str = "No Path"
-                    else: steps_str = "ERR (Path Type)" 
+                    else: steps_str = "ERR (Path Type)"
 
                 line = f"{algo_name_hist:<30} | {steps_str:>12} | {time_hist:>9.3f}\n"; self.history_textbox.insert(tk.END, line)
         self.history_textbox.configure(state="disabled")
@@ -499,20 +426,20 @@ class PuzzleApp(ctk.CTk):
             for algo_name_hist, _start_data_hist, goal_state_hist, path_hist, time_hist in self.history:
                 if algo_name_hist not in stats: stats[algo_name_hist] = {"count": 0, "total_time": 0.0, "total_steps": 0, "solved_count": 0}
                 stats[algo_name_hist]["count"] += 1; stats[algo_name_hist]["total_time"] += time_hist
-                
+
                 solved = False; steps_or_moves = 0
-                
-                if algo_name_hist in BELIEF_STATE_ALGORITHMS: 
-                    if path_hist and isinstance(path_hist, list): 
-                        steps_or_moves = len(path_hist) 
-                        solved = True 
-                else: 
+
+                if algo_name_hist in BELIEF_STATE_ALGORITHMS:
+                    if path_hist and isinstance(path_hist, list):
+                        steps_or_moves = len(path_hist)
+                        solved = True
+                else:
                     if path_hist and isinstance(path_hist, list) and len(path_hist) > 0 and \
                        all(isinstance(s, list) for s in path_hist) and \
-                       path_hist[-1] == goal_state_hist: 
+                       path_hist[-1] == goal_state_hist:
                         steps_or_moves = len(path_hist) - 1; solved = True
 
-                if solved: 
+                if solved:
                     stats[algo_name_hist]["solved_count"] += 1
                     stats[algo_name_hist]["total_steps"] += steps_or_moves
 
@@ -530,20 +457,20 @@ class PuzzleApp(ctk.CTk):
     def display_heuristic_graph(self):
         for widget in self.graph_frame.winfo_children(): widget.destroy()
         self.canvas_widget = None
-        if os.path.exists(GRAPH_FILENAME) and not self.belief_mode.get(): 
+        if os.path.exists(GRAPH_FILENAME) and not self.belief_mode.get():
             try:
                 fig = plt.figure(figsize=(6, 4))
                 img = plt.imread(GRAPH_FILENAME)
                 ax = fig.add_subplot(111)
                 ax.imshow(img)
-                ax.axis('off') 
+                ax.axis('off')
                 fig.tight_layout(pad=0)
 
                 self.canvas = FigureCanvasTkAgg(fig, master=self.graph_frame)
                 self.canvas_widget = self.canvas.get_tk_widget()
                 self.canvas_widget.pack(expand=True, fill="both")
                 self.canvas.draw()
-                plt.close(fig) 
+                plt.close(fig)
             except Exception as e:
                 self.graph_label = ctk.CTkLabel(self.graph_frame, text="Error loading graph image.", font=ctk.CTkFont(size=14)); self.graph_label.pack(pady=20)
                 self.update_status("Error displaying graph.", "red")
@@ -556,7 +483,7 @@ class PuzzleApp(ctk.CTk):
         is_belief = self.belief_mode.get()
         self.edit_add_start_button.configure(text="Add Belief State" if is_belief else "Edit Start State")
         self.clear_belief_button.configure(state="normal" if is_belief else "disabled")
-        self.randomize_button.configure(state="disabled" if is_belief else "normal") 
+        self.randomize_button.configure(state="disabled" if is_belief else "normal")
         self.state_control_label.configure(text="Belief States (Initial Set for 8-Puzzle):" if is_belief else "Single Start State (8-Puzzle):")
 
         if is_belief:
@@ -566,38 +493,38 @@ class PuzzleApp(ctk.CTk):
                 self.algo_combobox.set(available_algos[0])
                 self.selected_algo_name = available_algos[0]
             else:
-                self.algo_combobox.set("No belief algos") 
+                self.algo_combobox.set("No belief algos")
                 self.selected_algo_name = ""
             self.algo_combobox.configure(state="normal" if available_algos else "disabled")
         else:
             available_algos = list(SINGLE_STATE_ALGORITHMS.keys())
             self.algo_combobox.configure(values=available_algos)
-            if available_algos : 
-                self.algo_combobox.set(available_algos[0]) 
+            if available_algos :
+                self.algo_combobox.set(available_algos[0])
                 self.selected_algo_name = available_algos[0]
-            else: 
+            else:
                 self.algo_combobox.set("No single-state algos")
                 self.selected_algo_name = ""
             self.algo_combobox.configure(state="normal")
 
 
         if is_belief:
-            self.start_grid_frame.grid_forget() 
-            self.current_grid_frame.grid(row=0, column=0, columnspan=3, padx=10, pady=10, sticky="n") 
-            self.conformant_result_textbox.pack(expand=True, fill="both", padx=5, pady=5) 
-            self.current_grid_frame.winfo_children()[0].configure(text="Conformant Plan Output / Belief Moves (8-Puzzle)") 
-            self.update_visual_grid(self.current_tiles, [[0,0,0],[0,0,0],[0,0,0]]) 
-            self.enable_animation_controls(False) 
-            if BELIEF_STATE_ALGORITHMS: 
-                self.main_area.set("8-Puzzle Belief States") 
+            self.start_grid_frame.grid_forget()
+            self.current_grid_frame.grid(row=0, column=0, columnspan=3, padx=10, pady=10, sticky="n")
+            self.conformant_result_textbox.pack(expand=True, fill="both", padx=5, pady=5)
+            self.current_grid_frame.winfo_children()[0].configure(text="Conformant Plan Output / Belief Moves (8-Puzzle)")
+            self.update_visual_grid(self.current_tiles, [[0,0,0],[0,0,0],[0,0,0]])
+            self.enable_animation_controls(False)
+            if BELIEF_STATE_ALGORITHMS:
+                self.main_area.set("8-Puzzle Belief States")
         else:
-            self.start_grid_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n") 
-            self.current_grid_frame.grid(row=0, column=1, padx=10, pady=10, sticky="n") 
-            self.conformant_result_textbox.pack_forget() 
-            self.current_grid_frame.winfo_children()[0].configure(text="Current State / Moves (8-Puzzle)") 
-            self.reset_visualization() 
-        
-        self.update_belief_state_display() 
+            self.start_grid_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n")
+            self.current_grid_frame.grid(row=0, column=1, padx=10, pady=10, sticky="n")
+            self.conformant_result_textbox.pack_forget()
+            self.current_grid_frame.winfo_children()[0].configure(text="Current State / Moves (8-Puzzle)")
+            self.reset_visualization()
+
+        self.update_belief_state_display()
 
     def update_belief_state_display(self):
         for widget in self.belief_list_frame.winfo_children():
@@ -609,7 +536,7 @@ class PuzzleApp(ctk.CTk):
             no_state_label.pack(pady=10)
             return
 
-        cols = 3 
+        cols = 3
         for i, state in enumerate(self.belief_states):
             row_num = i // cols
             col_num = i % cols
@@ -619,7 +546,7 @@ class PuzzleApp(ctk.CTk):
             self.belief_list_widgets.append(state_frame)
 
     def clear_belief_states(self):
-        if not self.belief_mode.get(): return 
+        if not self.belief_mode.get(): return
         confirmed = messagebox.askyesno("Xác nhận", "Bạn có chắc muốn xóa tất cả trạng thái niềm tin của 8-Puzzle?", parent=self)
         if confirmed:
             self.belief_states = []
@@ -639,14 +566,14 @@ class PuzzleApp(ctk.CTk):
                 self.update_belief_state_display()
                 self.update_status(f"Belief state {len(self.belief_states)} (8-Puzzle) added.", "green")
         else:
-            self.edit_start_state() 
+            self.edit_start_state()
 
 
     def on_algo_select(self, choice):
         self.selected_algo_name = choice
 
-    def edit_start_state(self): 
-        if self.belief_mode.get(): return 
+    def edit_start_state(self):
+        if self.belief_mode.get(): return
         dialog = InputStateDialog(self, title="Edit Start State (8-Puzzle)", current_state=self.current_start_state)
         new_state = dialog.get_state()
         if new_state:
@@ -665,11 +592,11 @@ class PuzzleApp(ctk.CTk):
             valid_new, _ = validate_puzzle_state(new_state)
             if not valid_new: messagebox.showerror("Lỗi (Error)", "Invalid state returned from dialog.", parent=self); return
             self.current_goal_state = new_state
-            self.reset_visualization() 
+            self.reset_visualization()
             self.update_status("Goal state (8-Puzzle) updated. Ready.", "green")
 
     def randomize_start_callback(self):
-        if self.belief_mode.get(): return 
+        if self.belief_mode.get(): return
         self.update_status("Generating random 8-Puzzle state...", "orange")
         self.current_start_state = generate_random_solvable_state()
         self.reset_visualization()
@@ -680,13 +607,13 @@ class PuzzleApp(ctk.CTk):
         self.solution_path = None
         self.current_step_index = 0
         self.elapsed_time = 0.0
-        self.update_visual_grid(self.goal_tiles, self.current_goal_state) 
+        self.update_visual_grid(self.goal_tiles, self.current_goal_state)
 
         if self.belief_mode.get():
              self.conformant_result_textbox.configure(state="normal")
              self.conformant_result_textbox.delete("1.0", tk.END)
              self.conformant_result_textbox.configure(state="disabled")
-             self.update_visual_grid(self.current_tiles, [[0]*3]*3) 
+             self.update_visual_grid(self.current_tiles, [[0]*3]*3)
              self.enable_animation_controls(False)
         else:
             self.update_visual_grid(self.start_tiles, self.current_start_state)
@@ -698,23 +625,23 @@ class PuzzleApp(ctk.CTk):
 
         if self.canvas_widget: self.canvas_widget.destroy(); self.canvas_widget = None
         if not any(isinstance(w, FigureCanvasTkAgg) for w in self.graph_frame.winfo_children()):
-             for widget in self.graph_frame.winfo_children(): widget.destroy() 
+             for widget in self.graph_frame.winfo_children(): widget.destroy()
              self.graph_label = ctk.CTkLabel(self.graph_frame, text="Graph will appear here after solving (Single State Mode for 8-Puzzle).", font=ctk.CTkFont(size=14))
              self.graph_label.pack(pady=20)
 
-    def solve_puzzle_callback(self): # This is for 8-Puzzle
-        self.reset_visualization() 
+    def solve_puzzle_callback(self): 
+        self.reset_visualization()
 
         is_valid_goal, goal_msg = validate_puzzle_state(self.current_goal_state)
         if not is_valid_goal:
             messagebox.showerror("Lỗi Trạng Thái (State Error)", f"Goal state (8-Puzzle) is invalid:\n{goal_msg}")
             self.update_status("Error: Invalid Goal State (8-Puzzle).", "red"); return
-        goal_state_copy = copy.deepcopy(self.current_goal_state) 
+        goal_state_copy = copy.deepcopy(self.current_goal_state)
 
         is_belief = self.belief_mode.get()
         algo_func = None
         start_data = None
-        history_start_data = None 
+        history_start_data = None
 
         if is_belief:
             algo_func = BELIEF_STATE_ALGORITHMS.get(self.selected_algo_name)
@@ -723,29 +650,29 @@ class PuzzleApp(ctk.CTk):
             if not self.belief_states:
                 messagebox.showerror("Lỗi", "No 8-Puzzle belief states defined. Please add states.", parent=self)
                 self.update_status("Error: 8-Puzzle belief state list empty.", "red"); return
-            
+
             for i, bs in enumerate(self.belief_states):
                 is_valid_bs, bs_msg = validate_puzzle_state(bs)
                 if not is_valid_bs:
                     messagebox.showerror("Lỗi Trạng Thái (State Error)", f"Belief state {i+1} (8-Puzzle) is invalid:\n{bs_msg}")
                     self.update_status(f"Error: Invalid Belief State {i+1} (8-Puzzle).", "red"); return
-            
-            start_data = copy.deepcopy(self.belief_states) 
-            history_start_data = copy.deepcopy(self.belief_states) 
+
+            start_data = copy.deepcopy(self.belief_states)
+            history_start_data = copy.deepcopy(self.belief_states)
             self.update_status(f"Running {self.selected_algo_name} (8-Puzzle)...", "orange")
 
-        else: 
+        else:
             algo_func = SINGLE_STATE_ALGORITHMS.get(self.selected_algo_name)
             if not algo_func:
                 messagebox.showerror("Lỗi", f"Algorithm '{self.selected_algo_name}' not found for 8-Puzzle!")
                 self.update_status("Error: Algorithm not selected/found (8-Puzzle).", "red"); return
-            
+
             is_valid_start, start_msg = validate_puzzle_state(self.current_start_state)
             if not is_valid_start:
                 messagebox.showerror("Lỗi Trạng Thái (State Error)", f"Start state (8-Puzzle) is invalid:\n{start_msg}")
                 self.update_status("Error: Invalid Start State (8-Puzzle).", "red"); return
 
-            start_data = copy.deepcopy(self.current_start_state) 
+            start_data = copy.deepcopy(self.current_start_state)
             history_start_data = copy.deepcopy(self.current_start_state)
             self.update_status(f"Running {self.selected_algo_name} (8-Puzzle)...", "orange")
 
@@ -754,8 +681,8 @@ class PuzzleApp(ctk.CTk):
         temp_path = None
         error_occurred = False
         try:
-            temp_path = algo_func(start_data, goal_state_copy) 
-            
+            temp_path = algo_func(start_data, goal_state_copy)
+
         except Exception as e:
              messagebox.showerror("Lỗi Thuật Toán (Algorithm Error)", f"Error during {self.selected_algo_name} (8-Puzzle):\n{e}\nSee console for details.", parent=self)
              error_occurred = True
@@ -763,7 +690,7 @@ class PuzzleApp(ctk.CTk):
         self.elapsed_time = time.time() - solve_start_time
         self.update_time_display()
 
-        history_path_to_store = None 
+        history_path_to_store = None
 
         if error_occurred:
             self.update_status(f"Error during {self.selected_algo_name} (8-Puzzle).", "red")
@@ -771,16 +698,16 @@ class PuzzleApp(ctk.CTk):
             self.enable_animation_controls(False)
 
         elif is_belief:
-            self.enable_animation_controls(False) 
-            if temp_path is not None and isinstance(temp_path, list): 
-                self.solution_path = temp_path 
+            self.enable_animation_controls(False)
+            if temp_path is not None and isinstance(temp_path, list):
+                self.solution_path = temp_path
                 history_path_to_store = temp_path
-                
+
                 move_map = {(-1, 0): "Up", (1, 0): "Down", (0, -1): "Left", (0, 1): "Right"}
                 valid_moves = [m for m in temp_path if isinstance(m, tuple) and len(m) == 2]
                 moves_str = ", ".join([move_map.get(move, str(move)) for move in valid_moves])
-                
-                if not temp_path: 
+
+                if not temp_path:
                      result_text = "Initial 8-Puzzle belief state already satisfies the goal. (0 moves)"
                      self.update_status(f"{self.selected_algo_name}: Goal from start! (8-Puzzle)", "green")
                 else:
@@ -791,7 +718,7 @@ class PuzzleApp(ctk.CTk):
                 self.conformant_result_textbox.delete("1.0", tk.END)
                 self.conformant_result_textbox.insert("1.0", result_text)
                 self.conformant_result_textbox.configure(state="disabled")
-            else: 
+            else:
                 self.update_status(f"{self.selected_algo_name}: No conformant plan found (8-Puzzle).", "blue")
                 self.conformant_result_textbox.configure(state="normal")
                 self.conformant_result_textbox.delete("1.0", tk.END)
@@ -799,9 +726,9 @@ class PuzzleApp(ctk.CTk):
                 self.conformant_result_textbox.configure(state="disabled")
                 self.solution_path = None; history_path_to_store = None
 
-        else: 
+        else:
              if temp_path and isinstance(temp_path, list) and len(temp_path) > 0 and \
-                all(isinstance(s, list) and validate_puzzle_state(s)[0] for s in temp_path): 
+                all(isinstance(s, list) and validate_puzzle_state(s)[0] for s in temp_path):
                  self.solution_path = temp_path
                  history_path_to_store = temp_path
                  self.current_step_index = 0
@@ -812,23 +739,23 @@ class PuzzleApp(ctk.CTk):
                  if goal_reached:
                      self.update_status(f"{self.selected_algo_name}: Solution found! (8-Puzzle)", "green")
                      if plot_heuristic_graph(self.solution_path, goal_state_copy): self.display_heuristic_graph()
-                     else: 
+                     else:
                          if self.canvas_widget: self.canvas_widget.destroy(); self.canvas_widget = None
-                         self.graph_label.configure(text="Error generating 8-Puzzle graph."); 
+                         self.graph_label.configure(text="Error generating 8-Puzzle graph.");
                          if not self.graph_label.winfo_ismapped(): self.graph_label.pack(pady=20)
-                 else: 
+                 else:
                      self.update_status(f"{self.selected_algo_name}: Path found (Goal not reached) (8-Puzzle).", "orange")
-                     self.current_step_index = len(self.solution_path) - 1 
+                     self.current_step_index = len(self.solution_path) - 1
                      self.update_visual_grid(self.current_tiles, self.solution_path[self.current_step_index])
-                     self.enable_animation_controls(True) 
+                     self.enable_animation_controls(True)
                      if plot_heuristic_graph(self.solution_path, goal_state_copy): self.display_heuristic_graph()
 
-             else: 
+             else:
                  self.update_status(f"{self.selected_algo_name}: No solution or invalid path (8-Puzzle).", "blue")
                  self.solution_path = None; history_path_to_store = None
                  self.enable_animation_controls(False)
-        
-        self.update_step_display() 
+
+        self.update_step_display()
         self.history.append((self.selected_algo_name, history_start_data, goal_state_copy, history_path_to_store, self.elapsed_time))
         self.update_history_display()
         self.update_statistics_display()
@@ -854,17 +781,17 @@ class PuzzleApp(ctk.CTk):
     def toggle_play_pause(self):
         if not self.solution_path or self.belief_mode.get() or \
            not all(isinstance(s, list) for s in self.solution_path): return
-        
+
         if self.is_running_auto: self.stop_animation()
         else:
-            if self.current_step_index >= len(self.solution_path) - 1: 
-                self.current_step_index = -1 
+            if self.current_step_index >= len(self.solution_path) - 1:
+                self.current_step_index = -1
             self.start_animation()
 
     def start_animation(self):
         if not self.solution_path or self.is_running_auto or self.belief_mode.get() or \
            not all(isinstance(s, list) for s in self.solution_path): return
-        
+
         self.is_running_auto = True; self.play_pause_button.configure(text="⏸ Pause")
         self.prev_button.configure(state="disabled"); self.next_button.configure(state="disabled")
         self.update_status(f"Playing {self.selected_algo_name} (8-Puzzle)...", "cyan")
@@ -873,25 +800,25 @@ class PuzzleApp(ctk.CTk):
     def stop_animation(self):
         if self._animation_job:
             try: self.after_cancel(self._animation_job)
-            except ValueError: pass 
+            except ValueError: pass
             self._animation_job = None
         self.is_running_auto = False; self.play_pause_button.configure(text="▶ Play")
         if self.solution_path and not self.belief_mode.get() and \
            all(isinstance(s, list) for s in self.solution_path):
             self.enable_animation_controls(True)
-        
+
         current_status_text = self.status_label.cget("text")
-        if current_status_text.startswith("Status: Playing"): 
+        if current_status_text.startswith("Status: Playing"):
             self.update_status(f"Paused (8-Puzzle).", "blue")
 
     def _run_animation_step(self):
         if not self.is_running_auto or not self.solution_path or self.belief_mode.get() or \
            not all(isinstance(s, list) for s in self.solution_path) :
-             if self._animation_job: 
+             if self._animation_job:
                  try: self.after_cancel(self._animation_job);
                  except ValueError: pass
                  self._animation_job = None
-             self.stop_animation() 
+             self.stop_animation()
              return
 
         if self.current_step_index < len(self.solution_path) - 1:
@@ -899,33 +826,129 @@ class PuzzleApp(ctk.CTk):
             self.update_visual_grid(self.current_tiles, self.solution_path[self.current_step_index])
             self.update_step_display()
             self._animation_job = self.after(ANIMATION_DELAY_MS, self._run_animation_step)
-        else: 
+        else:
             self.stop_animation()
             goal_for_this_run = self.history[-1][2] if self.history else self.current_goal_state
-            
+
             goal_reached = (self.solution_path[-1] == goal_for_this_run)
             final_message = "Goal Reached! (8-Puzzle)" if goal_reached else "Animation Finished (End of Path for 8-Puzzle)."
             final_color = "green" if goal_reached else "blue"
             self.update_status(f"{self.selected_algo_name}: {final_message}", final_color)
 
+    
+    def run_mouse_cheese_game_callback(self):
+        if not MAZE_GAME_AVAILABLE:
+            messagebox.showerror("Lỗi Game Mê Cung",
+                                 "Không thể chạy game do lỗi import MouseCheeseGame.\n"
+                                 "Hãy kiểm tra cấu trúc thư mục 'maze_game_module' và các file phụ thuộc.")
+            return
 
-# --- Run the App ---
+        training_episodes = simpledialog.askinteger(
+            "Huấn luyện Agent (Game Mê Cung)",
+            "Nhập số lượt huấn luyện cho Q-Learning Agent:\n(VD: 0 để không huấn luyện, 100, 1000).\n"
+            "Q-table sẽ được lưu/tải từ 'q_table.csv' trong thư mục chương trình.",
+            parent=self, minvalue=0, initialvalue=100
+        )
+        if training_episodes is None:  
+            return
+
+        self.update_status("Đang khởi tạo Game Mê Cung...", "orange")
+        try:
+            
+            if not pygame.get_init():
+                pygame.init()
+
+            
+            maze_layout = [
+                [0, 1, 0, 0, 0],
+                [0, 1, 0, 1, 0],
+                [0, 0, 0, 1, 0],
+                [0, 1, 1, 1, 0],
+                [0, 0, 0, 0, 0]
+            ]
+            TARGET_CHEESE_TO_EAT = 2 
+            valid_positions = [(r, c) for r in range(len(maze_layout)) for c in range(len(maze_layout[0])) if maze_layout[r][c] == 0]
+            if not valid_positions:
+                raise ValueError("Mê cung không có ô trống hợp lệ!")
+            start_pos = random.choice(valid_positions)
+            available_for_cheese = list(set(valid_positions) - {start_pos})
+            num_cheese = min(TARGET_CHEESE_TO_EAT, len(available_for_cheese))
+            cheese_positions = random.sample(available_for_cheese, num_cheese) if num_cheese > 0 else []
+
+            q_agent_params = {
+                "learning_rate": 0.1, "discount_factor": 0.95, "epsilon_start": 1.0,
+                "epsilon_end": 0.05, "epsilon_decay_rate": 0.9995, "initial_q_value": 1.0
+            }
+
+            game_instance = MazeGame(
+                maze_layout=maze_layout, cheese_positions=cheese_positions, start_pos=start_pos,
+                target_cheese_count=TARGET_CHEESE_TO_EAT, q_agent_params=q_agent_params,
+                q_table_file=Q_TABLE_FILE 
+            )
+
+            self.update_status(f"Game Mê Cung: Đang huấn luyện ({training_episodes} lượt)..." if training_episodes > 0 else "Game Mê Cung: Bắt đầu.", "cyan")
+            self.update_idletasks()
+
+            if training_episodes > 0:
+                game_instance.train(training_episodes)
+            
+            self.update_status("Game Mê Cung: AI đang chơi...", "cyan")
+            game_instance.demonstrate_optimal_path(max_steps_demo=int(game_instance.grid_width * game_instance.grid_height * 2.5))
+            
+            
+            
+            self.update_status("Game Mê Cung đã kết thúc.", "blue")
+
+        except pygame.error as e:
+            messagebox.showerror("Lỗi Pygame (Maze)", f"Đã xảy ra lỗi với Pygame: {e}", parent=self)
+            self.update_status("Lỗi Pygame khi chạy Game Mê Cung.", "red")
+        except ImportError as e: 
+             messagebox.showerror("Lỗi Import (Game Mê Cung)", f"Không thể import module cần thiết cho game: {e}\n"
+                                 "Kiểm tra console để biết chi tiết.", parent=self)
+             self.update_status(f"Lỗi import Game Mê Cung: {e}", "red")
+        except Exception as e:
+            messagebox.showerror("Lỗi Game Mê Cung", f"Đã xảy ra lỗi không xác định: {e}\n{traceback.format_exc()}", parent=self)
+            self.update_status("Lỗi không xác định Game Mê Cung.", "red")
+
+
+    
+    def run_sudoku_game_callback(self):
+        if not SUDOKU_GAME_AVAILABLE:
+            messagebox.showerror("Lỗi Game Sudoku",
+                                 "Không thể chạy game Sudoku do lỗi import SudokuPygame.\n"
+                                 "Hãy kiểm tra cấu trúc thư mục 'sudoku_game_module'.")
+            return
+
+        self.update_status("Đang khởi tạo Game Sudoku...", "orange")
+        try:
+            
+            
+            
+            
+            
+            
+
+            sudoku_game_instance = SudokuPygame()
+            sudoku_game_instance.run() 
+
+            self.update_status("Game Sudoku đã kết thúc.", "blue")
+
+        except pygame.error as e:
+            messagebox.showerror("Lỗi Pygame (Sudoku)", f"Đã xảy ra lỗi với Pygame khi chạy Sudoku: {e}", parent=self)
+            self.update_status("Lỗi Pygame khi chạy Game Sudoku.", "red")
+        except Exception as e:
+            messagebox.showerror("Lỗi Game Sudoku", f"Đã xảy ra lỗi không xác định trong game Sudoku: {e}\n{traceback.format_exc()}", parent=self)
+            self.update_status("Lỗi không xác định Game Sudoku.", "red")
+
+
 if __name__ == "__main__":
-    # Add project root to sys.path to allow imports from maze_game_module
-    # This is important if GiaoDien.py is run as the main script.
-    import sys
+    
     current_script_dir = os.path.dirname(os.path.abspath(__file__))
-    if current_script_dir not in sys.path: # Add current dir to import ThuatToan
+    if current_script_dir not in sys.path:
         sys.path.append(current_script_dir)
     
-    # If maze_game_module is a subdirectory of where GiaoDien.py is:
-    # maze_game_package_path = os.path.join(current_script_dir, "maze_game_module")
-    # No, if GiaoDien.py is at root, and maze_game_module is also at root (as a dir),
-    # then just `from maze_game_module...` should work if maze_game_module is a package.
-    # The sys.path modification above (adding current_script_dir) handles this case.
-
     if os.path.exists(GRAPH_FILENAME):
         try: os.remove(GRAPH_FILENAME)
-        except OSError as e: pass 
+        except OSError as e: pass
     app = PuzzleApp()
     app.mainloop()

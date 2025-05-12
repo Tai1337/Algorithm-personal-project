@@ -1,4 +1,4 @@
-# maze_game_module/base_minigame.py
+
 class BaseMiniGame:
     def __init__(self, screen_width, screen_height, ui_manager=None):
         pass
