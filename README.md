@@ -223,18 +223,12 @@ CSPs là các bài toán mà mục tiêu là tìm một bộ giá trị gán cho
 #### 2.6.2. Forward Checking
 
 * **Trình bày:** Khi một biến $X_i$ được gán một giá trị, Forward Checking kiểm tra các biến chưa được gán $X_j$ có ràng buộc với $X_i$ và loại bỏ các giá trị trong miền $D_j$ không tương thích với giá trị đã gán cho $X_i$. Nếu miền của biến nào đó trở nên rỗng, việc gán hiện tại là không hợp lệ.
-* **Minh họa:**
-    ```
-    [Chèn hình ảnh minh họa Forward Checking, có thể so sánh với Backtracking đơn thuần tại đây]
-    ```
+
 
 #### 2.6.3. AC-3 (Arc Consistency Algorithm 3)
 
 * **Trình bày:** Là một thuật toán để đạt được *tính nhất quán cung (arc consistency)*. Một cung $(X_i, X_j)$ là nhất quán nếu với mọi giá trị $x \in D_i$, tồn tại một giá trị $y \in D_j$ sao cho $(x,y)$ thỏa mãn ràng buộc giữa $X_i$ và $X_j$. AC-3 loại bỏ các giá trị không nhất quán khỏi các miền cho đến khi không còn thay đổi. Thường được dùng như một bước tiền xử lý hoặc trong quá trình tìm kiếm.
-* **Minh họa:**
-    ```
-    [Chèn hình ảnh minh họa việc áp dụng AC-3 lên một CSP đơn giản tại đây]
-    ```
+
 
 #### 2.6.4. So sánh hiệu suất và nhận xét (Nhóm CSP)
 
@@ -269,10 +263,6 @@ RL là một lĩnh vực của học máy nơi một tác nhân (agent) học c�
     * **TD(0):** Cập nhật dựa trên trạng thái và phần thưởng ngay sau đó (như trong Q-Learning cơ bản).
     * **TD($\lambda$):** Sử dụng eligibility traces để cập nhật giá trị của nhiều trạng thái trước đó.
 * **Lưu ý:** *Phần này có thể cần nghiên cứu thêm để trình bày chi tiết hơn về sự khác biệt và các biến thể nếu mục tiêu của báo cáo yêu cầu đi sâu.*
-* **Minh họa:**
-    ```
-    [Ghi chú: Hình ảnh minh họa Q-Learning có thể đã đủ để thể hiện ý tưởng cơ bản của TD Learning trong ngữ cảnh này.]
-    ```
 
 #### 2.7.3. Nhận xét và ứng dụng (Nhóm Reinforcement Learning)
 
