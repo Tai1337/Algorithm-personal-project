@@ -12,12 +12,10 @@ Báo cáo này nhằm đạt được các mục tiêu sau:
     * Tìm kiếm trong môi trường phức tạp
     * Tìm kiếm trong môi trường có ràng buộc (Constraint Satisfaction Problems)
     * Các khái niệm cơ bản về Học tăng cường (Reinforcement Learning) liên quan đến tìm kiếm.
-* Đánh giá khả năng ứng dụng thực tế của từng thuật toán hoặc nhóm thuật toán, minh họa thông qua các ví dụ trực quan như bài toán 8 ô chữ (8-puzzle), tìm đường đi, hoặc các kịch bản phù hợp khác.
-* Trình bày các kết quả thực nghiệm (nếu có) để minh chứng cho hiệu suất của một số thuật toán được khảo sát.
+* Đánh giá khả năng ứng dụng thực tế của từng thuật toán hoặc nhóm thuật toán, minh họa thông qua các ví dụ trực quan như bài toán 8 ô chữ (8-puzzle), tìm đường đi, sudoku hoặc các kịch bản phù hợp khác.
+* Trình bày kết quả đạt được
 
 ## 2. Nội dung
-
-Phần này sẽ đi sâu vào lý thuyết và cách hoạt động của các thuật toán tìm kiếm, được phân loại thành các nhóm chính dựa trên đặc điểm và phương pháp tiếp cận của chúng.
 
 ### 2.1. Giới thiệu chung về bài toán tìm kiếm
 
