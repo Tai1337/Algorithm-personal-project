@@ -179,10 +179,7 @@ Các thuật toán này hoạt động trên một trạng thái hiện tại v�
 
 #### 2.4.5. So sánh hiệu suất và nhận xét (Nhóm Local Search)
 
-* **Bảng so sánh đặc điểm:**
-    ```
-    [Chèn hình ảnh/bảng so sánh các đặc điểm chính (khả năng thoát local optima, yêu cầu bộ nhớ, tốc độ) của Hill Climbing, Simulated Annealing, Genetic Algorithms, Beam Search tại đây]
-    ```
+
 * **Nhận xét ứng dụng:** Phù hợp cho các bài toán tối ưu hóa nơi giải pháp "đủ tốt" là chấp nhận được, ví dụ: lập lịch, thiết kế, TSP.
 
 ### 2.5. Tìm kiếm trong môi trường phức tạp
