@@ -131,12 +131,7 @@ Nhóm thuật toán này sử dụng kiến thức đặc thù của bài toán,
     * Độ phức tạp thời gian: Tương tự A* nếu heuristic tốt, nhưng có thể lặp lại việc duyệt các nút.
     * Độ phức tạp không gian: $O(bd)$ (tương tự IDS).
 
-#### 2.3.4. So sánh hiệu suất và nhận xét (Nhóm Informed Search)
 
-* **Hình ảnh so sánh:**
-    ```
-    [Chèn hình ảnh/bảng so sánh hiệu suất của Greedy Search, A*, IDA* (có thể so với Uninformed Search) tại đây]
-    ```
 * **Nhận xét khi áp dụng lên trò chơi 8 ô chữ:**
     * Chất lượng của hàm heuristic là cực kỳ quan trọng. Một heuristic tốt giúp A* và IDA* tìm ra giải pháp nhanh hơn nhiều so với các thuật toán uninformed.
     * Greedy Search có thể nhanh nhưng thường không tối ưu.
