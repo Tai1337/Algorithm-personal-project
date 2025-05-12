@@ -60,9 +60,7 @@ Các thuật toán tìm kiếm thường được đánh giá dựa trên các t
 
 * **Trình bày:** DFS luôn ưu tiên mở rộng nút sâu nhất trong cây tìm kiếm. Thuật toán sử dụng một ngăn xếp (stack) để quản lý các trạng thái sẽ được duyệt (thường được triển khai đệ quy).
 * **Minh họa:**
-    ```
-    [Chèn hình ảnh gif minh họa thuật toán DFS áp dụng lên trò chơi tại đây]
-    ```
+    ![DFS](gif/DFS.gif)
 * **Đánh giá hiệu suất:**
     * Tính đầy đủ: Không (nếu có nhánh vô hạn và không giới hạn độ sâu); Có (trong không gian trạng thái hữu hạn).
     * Tính tối ưu: Không.
@@ -84,9 +82,7 @@ Các thuật toán tìm kiếm thường được đánh giá dựa trên các t
 
 * **Trình bày:** IDS kết hợp ưu điểm của DFS (không gian) và BFS (tính đầy đủ, tối ưu khi chi phí bước như nhau). Thuật toán thực hiện DFS lặp đi lặp lại với giới hạn độ sâu tăng dần (Depth-Limited Search - DLS), bắt đầu từ 0, 1, 2,... cho đến khi tìm thấy giải pháp.
 * **Minh họa:**
-    ```
-    [Chèn hình ảnh gif minh họa thuật toán IDS áp dụng lên trò chơi tại đây]
-    ```
+    ![IDS](gif/IDDFS.gif)
 * **Đánh giá hiệu suất:**
     * Tính đầy đủ: Có.
     * Tính tối ưu: Có (nếu chi phí mỗi bước là như nhau).
@@ -172,18 +168,14 @@ Các thuật toán này hoạt động trên một trạng thái hiện tại v�
     * *Steepest-Ascent Hill Climbing (Leo đồi dốc nhất):* Chọn láng giềng tốt nhất trong tất cả các láng giềng.
     * *Stochastic Hill Climbing (Leo đồi ngẫu nhiên):* Chọn ngẫu nhiên một láng giềng tốt hơn.
 * **Minh họa:**
-    ```
-    [Chèn hình ảnh gif minh họa một biến thể Hill Climbing (ví dụ: giải bài toán N-Queens) tại đây]
-    ```
+    ![Hill Climbing](gif/HillClimbing.gif)
 * **Đánh giá chung:** Nhanh, ít tốn bộ nhớ nhưng không đảm bảo tìm được giải pháp tối ưu toàn cục.
 
 #### 2.4.2. Simulated Annealing (Ủ mô phỏng)
 
 * **Trình bày:** Lấy cảm hứng từ quá trình ủ kim loại. Thuật toán cho phép di chuyển đến trạng thái xấu hơn với một xác suất nhất định, xác suất này giảm dần theo "nhiệt độ" (một tham số điều khiển). Điều này giúp thoát khỏi cực trị địa phương.
 * **Minh họa:**
-    ```
-    [Chèn hình ảnh gif minh họa thuật toán Simulated Annealing tại đây]
-    ```
+    ![Simulated Annealing](gif/SimulatedAnnealing.gif)
 * **Đánh giá hiệu suất:** Có khả năng tìm được giải pháp gần tối ưu toàn cục nếu lịch trình giảm nhiệt độ phù hợp.
 
 #### 2.4.3. Genetic Algorithms (Thuật toán di truyền)
@@ -191,9 +183,7 @@ Các thuật toán này hoạt động trên một trạng thái hiện tại v�
 * **Trình bày:** Mô phỏng quá trình tiến hóa tự nhiên. Duy trì một "quần thể" các giải pháp tiềm năng (nhiễm sắc thể). Các giải pháp tốt hơn có nhiều khả năng được chọn để "lai ghép" và "đột biến" tạo ra thế hệ giải pháp mới.
 * **Các khái niệm:** Quần thể, Nhiễm sắc thể (Encoding), Hàm thích nghi (Fitness function), Chọn lọc (Selection), Lai ghép (Crossover), Đột biến (Mutation).
 * **Minh họa:**
-    ```
-    [Chèn hình ảnh gif/sơ đồ minh họa quá trình hoạt động của thuật toán di truyền tại đây]
-    ```
+    ![Genetic Algorithm](gif/GeneticAlgorithm.gif)
 * **Đánh giá hiệu suất:** Mạnh mẽ trong không gian tìm kiếm lớn và phức tạp, có khả năng tìm giải pháp tốt nhưng cần nhiều tham số để tinh chỉnh.
 
 #### 2.4.4. Beam Search (Tìm kiếm chùm tia)
@@ -258,9 +248,7 @@ CSPs là các bài toán mà mục tiêu là tìm một bộ giá trị gán cho
     * *Minimum Remaining Values (MRV):* Chọn biến có ít giá trị hợp lệ còn lại nhất.
     * *Least Constraining Value (LCV):* Ưu tiên giá trị mà loại bỏ ít lựa chọn nhất cho các biến lân cận.
 * **Minh họa:**
-    ```
-    [Chèn hình ảnh gif minh họa thuật toán Backtracking giải bài toán Sudoku hoặc tô màu đồ thị tại đây]
-    ```
+    ![Backtracking](gif/Backtracking.gif)
 
 #### 2.6.2. Forward Checking
 
